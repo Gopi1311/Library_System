@@ -1,5 +1,3 @@
-// src/pages/Borrows.tsx
-
 import React, { useState, useEffect } from "react";
 import type { Borrow, User, Book } from "../types";
 import { api } from "../congif/api";
@@ -31,8 +29,9 @@ const Borrows: React.FC = () => {
 
   const [showFineModal, setShowFineModal] = useState(false);
   const [selectedBorrow, setSelectedBorrow] = useState<Borrow | null>(null);
-  const [paymentMethod, setPaymentMethod] =
-    useState<"cash" | "card" | "online">("cash");
+  const [paymentMethod, setPaymentMethod] = useState<
+    "cash" | "card" | "online"
+  >("cash");
 
   useEffect(() => {
     loadPageData();
@@ -52,7 +51,7 @@ const Borrows: React.FC = () => {
       setBorrows(b1.data.borrowDetails);
       setUsers(b2.data);
       setBooks(b3.data.filter((b: Book) => b.availableCopies > 0));
-    } catch (err) {
+    } catch (err: unknown) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
@@ -69,7 +68,8 @@ const Borrows: React.FC = () => {
       setIssueForm({ userId: "", bookId: "", days: 14 });
       loadPageData();
     } catch (err) {
-      setError((err as Error).message);
+      alert((err as Error).message);
+      setShowIssueForm(false);
     }
   };
 
@@ -89,7 +89,8 @@ const Borrows: React.FC = () => {
       await api.patch(`/borrows/${borrowId}`, { status: "returned" });
       loadPageData();
     } catch (err) {
-      setError((err as Error).message);
+      alert((err as Error).message);
+      // setError((err as Error).message);
     }
   };
 
@@ -107,7 +108,8 @@ const Borrows: React.FC = () => {
       setShowFineModal(false);
       loadPageData();
     } catch (err) {
-      setError((err as Error).message);
+      alert((err as Error).message);
+      // setError((err as Error).message);
     }
   };
 
@@ -181,7 +183,7 @@ const Borrows: React.FC = () => {
         issueForm={issueForm}
         userSearch={userSearch}
         bookSearch={bookSearch}
-        onClose={() => setShowIssueForm(false)}
+        onClose={() => {setShowIssueForm(false);setBookSearch("");setUserSearch("")}}
         onSubmit={handleIssueBook}
         onUserSearch={handleUserSearch}
         onBookSearch={handleBookSearch}

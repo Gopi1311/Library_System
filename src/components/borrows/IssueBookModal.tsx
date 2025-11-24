@@ -1,4 +1,3 @@
-// src/components/borrows/IssueBookModal.tsx
 import React from "react";
 import type { User, Book } from "../../types";
 
@@ -39,7 +38,7 @@ const IssueBookModal: React.FC<IssueBookModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center p-4 z-50">
   <div className="bg-white rounded-lg max-w-md w-full p-6 overflow-visible">
 
         <h2 className="text-xl font-bold mb-4">Issue New Book</h2>

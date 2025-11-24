@@ -1,10 +1,18 @@
+// src/pages/Users.tsx
 import React, { useState, useEffect } from "react";
-import type { User, UserCreateDTO, UserUpdateDTO } from "../types";
 import UserTable from "../components/users/UserTable";
 import UserForm from "../components/users/UserForm";
 import { api } from "../congif/api";
 import { LoadingOverlay } from "../components/common/LoadingOverlay";
 import { GlobalError } from "../components/common/GlobalError";
+
+import { z } from "zod";
+import {
+  UserSchema,
+  type User,
+  type UserCreateDTO,
+  type UserUpdateDTO,
+} from "../validation/userSchema";
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -14,17 +22,14 @@ const Users: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
 
     try {
       const { data } = await api.get("/users/");
-      setUsers(data);
+      const parsed = z.array(UserSchema).parse(data); // runtime validation + typing
+      setUsers(parsed);
     } catch (err: unknown) {
       const error = err as Error;
       setError(error.message);
@@ -32,6 +37,10 @@ const Users: React.FC = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const handleFormSubmit = async (data: UserCreateDTO | UserUpdateDTO) => {
     try {
@@ -61,7 +70,8 @@ const Users: React.FC = () => {
       fetchUsers();
     } catch (err) {
       console.error("Error saving user:", err);
-      setError("Failed to save user");
+      alert((err as Error).message);
+      setShowForm(false);
     }
   };
 
@@ -76,7 +86,6 @@ const Users: React.FC = () => {
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // ❗ Error Page
   if (error) {
     return <GlobalError message={error} onRetry={fetchUsers} />;
   }
@@ -89,7 +98,6 @@ const Users: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <p className="text-gray-600">Manage library users and librarians</p>
 
-        {/* Hide Add User button when no data */}
         {!(users.length === 0 && !loading) && (
           <button
             onClick={() => {
@@ -134,7 +142,7 @@ const Users: React.FC = () => {
         <UserTable users={filteredUsers} onEdit={handleEdit} />
       )}
 
-      {/* SINGLE Modal */}
+      {/* Modal */}
       {showForm && (
         <UserForm
           editingUser={editingUser}

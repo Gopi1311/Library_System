@@ -25,9 +25,7 @@ const Fines: React.FC = () => {
     }
   };
 
-  /* --------------------------------------------------------
-     Fetch Outstanding Fines
-  -------------------------------------------------------- */
+  
   const fetchOutstandingFines = async () => {
     try {
       const { data } = await api.get("/borrows/outstanding");
@@ -45,9 +43,6 @@ const Fines: React.FC = () => {
     fetchOutstandingFines();
   }, []);
 
-  /* --------------------------------------------------------
-     Error Handling
-  -------------------------------------------------------- */
   if (error) {
     return <GlobalError message={error} onRetry={fetchFines} />;
   }
@@ -56,16 +51,11 @@ const Fines: React.FC = () => {
     return <LoadingOverlay />;
   }
 
-  /* --------------------------------------------------------
-     JSX Rendering
-  -------------------------------------------------------- */
   return (
     <div className="space-y-8">
       <p className="text-gray-600">
         View outstanding fines and payment history
       </p>
-
-      {/* ------------------ Outstanding Fines ------------------ */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Outstanding Fines</h2>
 
@@ -129,7 +119,7 @@ const Fines: React.FC = () => {
         )}
       </div>
 
-      {/* ------------------ Payment History Section ------------------ */}
+      {/* Payment History Section*/}
       <FinePaymentHistory fines={fines} />
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import StatCard from "../components/common/StatCard";
+import StatCard from "../components/dashBoard/StatCard";
 import DashBoardActivity from "../components/dashBoard/DashBoardActivity";
 
 import type { Activity, DashboardStats, StatCardProps } from "../types";

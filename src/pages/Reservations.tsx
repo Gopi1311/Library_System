@@ -99,7 +99,8 @@ const Reservations: React.FC = () => {
       await api.patch(`/reservations/${id}/cancel`);
       fetchReservations();
     } catch (err) {
-      setError((err as Error).message);
+       alert((err as Error).message)
+      // setError((err as Error).message);
     }
   };
 
@@ -299,7 +300,7 @@ const Reservations: React.FC = () => {
           setBookSearch(`${b.title} — ${b.author}`);
           setBooks([]);
         }}
-        onClose={() => setShowModal(false)}
+        onClose={() => {setShowModal(false);setBookSearch("");setUserSearch("")}}
         onSubmit={handleSubmitReserve}
       />
     </div>

@@ -1,7 +1,6 @@
 import React from "react";
 import type { StatCardProps } from "../../types";
 
-// DO NOT export this! Keep it internal to the file.
 const COLOR_MAP = {
   blue: "bg-blue-100 text-blue-600",
   green: "bg-green-100 text-green-600",

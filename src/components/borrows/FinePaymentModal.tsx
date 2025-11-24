@@ -1,4 +1,3 @@
-// src/components/borrows/FinePaymentModal.tsx
 import React from "react";
 import type { Borrow } from "../../types";
 

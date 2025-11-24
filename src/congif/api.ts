@@ -11,18 +11,22 @@ export const api = axios.create({
 });
 
 // ✅ Global Error Interceptor
+
 api.interceptors.response.use(
   (response) => response,
-  (error: unknown) => {
-    let message = "Something went wrong";
+  (error) => {
+    if (axios.isAxiosError(error)) {
+      const backendMessage =
+        error.response?.data?.message ||  // backend message
+        error.response?.data?.error ||    // fallback if you send {error:""}
+        error.message;                    // axios default message
 
-    if (error instanceof AxiosError) {
-      message = error.response?.data?.error || error.message;
-    } else if (error instanceof Error) {
-      message = error.message;
+      return Promise.reject({
+        message: backendMessage,
+        status: error.response?.status || 500,
+      });
     }
 
-    // Throw message only — not Axios error object
-    return Promise.reject(new Error(message));
+    return Promise.reject(error);
   }
 );
