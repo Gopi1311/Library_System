@@ -40,7 +40,8 @@ const IssueBookModal: React.FC<IssueBookModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
+  <div className="bg-white rounded-lg max-w-md w-full p-6 overflow-visible">
+
         <h2 className="text-xl font-bold mb-4">Issue New Book</h2>
 
         <form onSubmit={onSubmit} className="space-y-4">
@@ -55,7 +56,8 @@ const IssueBookModal: React.FC<IssueBookModalProps> = ({
             />
 
             {userSearch && users.length > 0 && (
-              <ul className="absolute w-full bg-white border rounded-lg mt-1 max-h-40 overflow-y-auto shadow-lg">
+             <ul className="absolute z-50 w-full bg-white border mt-1 rounded-lg max-h-40 overflow-y-auto shadow-lg">
+
                 {users.map((u) => (
                   <li
                     key={u._id}
