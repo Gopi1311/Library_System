@@ -13,6 +13,7 @@ const pageTitles: Record<string, string> = {
   "/reservations": "Reservations",
   "/reviews": "Reviews",
   "/fines": "Fines & Payments",
+  
 };
 
 const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {

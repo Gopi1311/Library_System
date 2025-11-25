@@ -1,28 +1,30 @@
 import React, { useState, useEffect } from "react";
-import type { Borrow, User, Book } from "../types";
-import { api } from "../congif/api";
 
-import BorrowTableRow from "../components/borrows/BorrowTableRow";
-import IssueBookModal from "../components/borrows/IssueBookModal";
-import FinePaymentModal from "../components/borrows/FinePaymentModal";
+import { BorrowListSchema } from "../../validation/borrowBookSchema";
+import type {
+  Borrow,
+  IssueBookDTO,
+  BorrowUser,
+  BorrowBook,
+} from "../../validation/borrowBookSchema";
+import { api } from "../../congif/api";
 
-import { LoadingOverlay } from "../components/common/LoadingOverlay";
-import { GlobalError } from "../components/common/GlobalError";
+import BorrowTableRow from "../../components/admin/borrows/BorrowTableRow";
+import IssueBookModal from "../../components/admin/borrows/IssueBookModal";
+import FinePaymentModal from "../../components/admin/borrows/FinePaymentModal";
+
+import { LoadingOverlay } from "../../components/common/LoadingOverlay";
+import { GlobalError } from "../../components/common/GlobalError";
 
 const Borrows: React.FC = () => {
   const [borrows, setBorrows] = useState<Borrow[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [books, setBooks] = useState<Book[]>([]);
+  const [users, setUsers] = useState<BorrowUser[]>([]);
+  const [books, setBooks] = useState<BorrowBook[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [showIssueForm, setShowIssueForm] = useState(false);
-  const [issueForm, setIssueForm] = useState({
-    userId: "",
-    bookId: "",
-    days: 14,
-  });
 
   const [userSearch, setUserSearch] = useState("");
   const [bookSearch, setBookSearch] = useState("");
@@ -47,10 +49,29 @@ const Borrows: React.FC = () => {
         api.get("/users"),
         api.get("/books/all"),
       ]);
+      const parsed = BorrowListSchema.parse(b1.data.borrowDetails);
+      setBorrows(parsed);
+      const rawUsers = b2.data;
 
-      setBorrows(b1.data.borrowDetails);
-      setUsers(b2.data);
-      setBooks(b3.data.filter((b: Book) => b.availableCopies > 0));
+      setUsers(
+        rawUsers.map((u: any) => ({
+          _id: u._id,
+          name: u.name,
+          email: u.email,
+        })) as BorrowUser[]
+      );
+
+      const rawBooks = b3.data;
+
+      setBooks(
+        rawBooks
+          .filter((b: any) => b.availableCopies > 0)
+          .map((b: any) => ({
+            _id: b._id,
+            title: b.title,
+            author: b.author,
+          })) as BorrowBook[]
+      );
     } catch (err: unknown) {
       setError((err as Error).message);
     } finally {
@@ -60,16 +81,13 @@ const Borrows: React.FC = () => {
 
   // ---------- ISSUE BOOK ----------
 
-  const handleIssueBook = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleIssueBook = async (data: IssueBookDTO) => {
     try {
-      await api.post("/borrows", issueForm);
+      await api.post("/borrows", data);
       setShowIssueForm(false);
-      setIssueForm({ userId: "", bookId: "", days: 14 });
       loadPageData();
     } catch (err) {
       alert((err as Error).message);
-      setShowIssueForm(false);
     }
   };
 
@@ -98,7 +116,7 @@ const Borrows: React.FC = () => {
     if (!selectedBorrow) return;
 
     try {
-      await api.post("/fine/pay-fine", {
+      await api.post("/fines/pay-fine", {
         userId: selectedBorrow.userId._id,
         borrowId: selectedBorrow._id,
         amount: selectedBorrow.fine,
@@ -180,24 +198,24 @@ const Borrows: React.FC = () => {
         isOpen={showIssueForm}
         users={users}
         books={books}
-        issueForm={issueForm}
         userSearch={userSearch}
         bookSearch={bookSearch}
-        onClose={() => {setShowIssueForm(false);setBookSearch("");setUserSearch("")}}
+        onClose={() => {
+          setShowIssueForm(false);
+          setBookSearch("");
+          setUserSearch("");
+        }}
         onSubmit={handleIssueBook}
         onUserSearch={handleUserSearch}
         onBookSearch={handleBookSearch}
         onSelectUser={(u) => {
-          setIssueForm({ ...issueForm, userId: u._id });
           setUserSearch(`${u.name} (${u.email})`);
           setUsers([]);
         }}
         onSelectBook={(b) => {
-          setIssueForm({ ...issueForm, bookId: b._id });
           setBookSearch(`${b.title} — ${b.author}`);
           setBooks([]);
         }}
-        onDaysChange={(n) => setIssueForm({ ...issueForm, days: n })}
       />
 
       {/* Fine Payment Modal */}

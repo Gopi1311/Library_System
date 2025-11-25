@@ -5,7 +5,7 @@ import {
   ClockIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import type { Reservation } from "../../types";
+import type { Reservation } from "../../validation/reservationSchema";
 
 interface StatusConfig {
   class: string;
@@ -49,24 +49,26 @@ const ReservationCard: React.FC<Props> = ({
         </div>
 
         {/* User Info */}
-        <div className="space-y-3 mb-4">
-          <div className="flex items-center text-sm text-gray-600">
-            <UserIcon className="w-4 h-4 mr-2 text-gray-400" />
-            <span className="font-medium">{reservation.userId?.name}</span>
-          </div>
+        {reservation.userId?.name && (
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center text-sm text-gray-600">
+              <UserIcon className="w-4 h-4 mr-2 text-gray-400" />
+              <span className="font-medium">{reservation.userId?.name}</span>
+            </div>
 
-          <div className="flex items-center text-sm text-gray-600">
-            <svg
-              className="w-4 h-4 mr-2 text-gray-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-            </svg>
-            {reservation.userId?.email}
+            <div className="flex items-center text-sm text-gray-600">
+              <svg
+                className="w-4 h-4 mr-2 text-gray-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+              </svg>
+              {reservation.userId?.email}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Dates */}
         <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-xl mb-4">

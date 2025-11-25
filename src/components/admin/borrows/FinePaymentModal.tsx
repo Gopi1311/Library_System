@@ -1,5 +1,5 @@
 import React from "react";
-import type { Borrow } from "../../types";
+import type { Borrow } from "../../../validation/borrowBookSchema";
 
 interface FinePaymentProps {
   isOpen: boolean;

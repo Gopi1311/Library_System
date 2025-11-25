@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 
-import type { Book, BookFormDTO } from "../validation/bookSchema";
-import { BookSchema } from "../validation/bookSchema";
+import {
+  BookSchema,
+  BookCreateSchema,
+  BookUpdateSchema,
+  type Book,
+  type BookFormDTO,
+} from "../../validation/bookSchema";
 
-import BookForm from "../components/BookForm";
-import { api } from "../congif/api";
-import { generateIsbn } from "../utils/generateRandomId ";
-import { exportBooksToExcel } from "../utils/exportBooksToExcel";
-import { LoadingOverlay } from "../components/common/LoadingOverlay";
-import { GlobalError } from "../components/common/GlobalError";
+import BookForm from "../../components/common/BookForm";
+import { api } from "../../congif/api";
+import { generateIsbn } from "../../utils/generateRandomId ";
+import { exportBooksToExcel } from "../../utils/exportBooksToExcel";
+import { LoadingOverlay } from "../../components/common/LoadingOverlay";
+import { GlobalError } from "../../components/common/GlobalError";
 
 import { z } from "zod";
 
@@ -44,7 +49,6 @@ const Books: React.FC = () => {
 
       const validated = z.array(BookSchema).parse(data);
       setBooks(validated);
-
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -59,13 +63,14 @@ const Books: React.FC = () => {
   const handleSubmit = async (data: BookFormDTO) => {
     try {
       if (editingBook) {
-        const payload = { ...data };
-        delete payload.isbn;
-        delete payload.availableCopies;
+        // validate strictly for update
+        const updatePayload = BookUpdateSchema.parse(data);
 
-        await api.put(`/books/${editingBook._id}`, payload);
+        await api.put(`/books/${editingBook._id}`, updatePayload);
       } else {
-        const createPayload = data;
+        // validate strictly for create
+        const createPayload = BookCreateSchema.parse(data);
+
         await api.post("/books", createPayload);
       }
 
@@ -73,7 +78,6 @@ const Books: React.FC = () => {
       setEditingBook(null);
       setFormDefaults(emptyForm);
       fetchBooks();
-
     } catch (err) {
       setError((err as Error).message);
     }
@@ -171,7 +175,9 @@ const Books: React.FC = () => {
       {books.length === 0 ? (
         <div className="text-center text-gray-600 py-10">
           <h2 className="text-xl font-semibold">No Books Available</h2>
-          <p className="text-gray-500 mb-4">Add new books to build your library collection.</p>
+          <p className="text-gray-500 mb-4">
+            Add new books to build your library collection.
+          </p>
 
           <button
             onClick={() => {
@@ -204,19 +210,29 @@ const Books: React.FC = () => {
                   className="h-14 w-14"
                   strokeWidth="1.5"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m0 0l3-3m-3 3l-3-3m6-6V6a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2h3" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v12m0 0l3-3m-3 3l-3-3m6-6V6a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2h3"
+                  />
                 </svg>
               </div>
 
               <div className="p-4">
-                <h3 className="font-semibold text-lg line-clamp-2">{book.title}</h3>
+                <h3 className="font-semibold text-lg line-clamp-2">
+                  {book.title}
+                </h3>
                 <p className="text-sm text-gray-700">by {book.author}</p>
-                <p className="text-xs text-gray-500 mb-3">Shelf: {book.shelfLocation}</p>
+                <p className="text-xs text-gray-500 mb-3">
+                  Shelf: {book.shelfLocation}
+                </p>
 
                 <div className="flex justify-between items-center mb-3">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                      book.availableCopies > 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                      book.availableCopies > 0
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
                     }`}
                   >
                     {book.availableCopies} available
@@ -243,7 +259,6 @@ const Books: React.FC = () => {
                   </button>
                 </div>
               </div>
-
             </div>
           ))}
         </div>

@@ -1,9 +1,9 @@
-import React from "react";
+import React ,{useEffect} from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { BookFormSchema } from "../validation/bookSchema";
-import type { BookFormDTO } from "../validation/bookSchema";
+import { BookFormSchema } from "../../validation/bookSchema";
+import type { BookFormDTO } from "../../validation/bookSchema";
 
 interface BookFormProps {
   defaultValues: BookFormDTO;
@@ -18,27 +18,28 @@ const BookForm: React.FC<BookFormProps> = ({
   onSubmit,
   onCancel,
 }) => {
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    reset,
-    formState: { errors },
-  } = useForm<BookFormDTO>({
-    defaultValues,
-    resolver: zodResolver(BookFormSchema),
-  });
+const {
+  register,
+  handleSubmit,
+  reset,
+  control,
+  setValue,
+  formState: { errors },
+} = useForm<BookFormDTO>({
+  defaultValues,
+  resolver: zodResolver(BookFormSchema),   // always loose schema
+});
+
 
   const totalCopies = useWatch({ control, name: "totalCopies" });
 
   // Reset form when switching modes
-  React.useEffect(() => {
+useEffect(() => {
     reset(defaultValues);
   }, [defaultValues, reset]);
 
   // Auto-fill availableCopies for creation
-  React.useEffect(() => {
+ useEffect(() => {
     if (!editingBook && totalCopies !== undefined) {
       setValue("availableCopies", totalCopies);
     }

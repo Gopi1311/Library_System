@@ -1,16 +1,20 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { api } from "../congif/api";
-import type { Reservation, User, Book } from "../types";
-import ReserveBookModal from "../components/reservations/ReserveBookModal";
-import ReservationCard from "../components/reservations/ReservationCard";
-import { LoadingOverlay } from "../components/common/LoadingOverlay";
-import { GlobalError } from "../components/common/GlobalError";
+import { api } from "../../congif/api";
+import type { Reservation } from "../../validation/reservationSchema";
+import type { User } from "../../validation/userSchema";
+import type { Book } from "../../validation/bookSchema";
+import type { ReserveBookDTO } from "../../validation/reservationSchema";
+import ReserveBookModal from "../../components/common/ReserveBookModal";
+import ReservationCard from "../../components/common/ReservationCard";
+import { LoadingOverlay } from "../../components/common/LoadingOverlay";
+import { GlobalError } from "../../components/common/GlobalError";
 import {
   BookOpenIcon,
   XMarkIcon,
   CheckBadgeIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
+import ReservationStats from "../../components/common/ReservationStats";
 
 type ReservationStatusFilter = "all" | "active" | "completed" | "cancelled";
 
@@ -25,8 +29,6 @@ const Reservations: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [userSearch, setUserSearch] = useState("");
   const [bookSearch, setBookSearch] = useState("");
-  const [selectedUserId, setSelectedUserId] = useState("");
-  const [selectedBookId, setSelectedBookId] = useState("");
 
   const fetchReservations = useCallback(async () => {
     try {
@@ -72,21 +74,17 @@ const Reservations: React.FC = () => {
     }
   };
 
-  const handleSubmitReserve = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmitReserve = async (data: ReserveBookDTO) => {
     try {
-      await api.post("/reservations", {
-        userId: selectedUserId,
-        bookId: selectedBookId,
-      });
+      await api.post("/reservations", data);
 
       alert("Book reserved successfully!");
 
       setShowModal(false);
-      setSelectedUserId("");
-      setSelectedBookId("");
       setUserSearch("");
       setBookSearch("");
+      setUsers([]);
+      setBooks([]);
       fetchReservations();
     } catch (err) {
       alert((err as Error).message);
@@ -99,7 +97,7 @@ const Reservations: React.FC = () => {
       await api.patch(`/reservations/${id}/cancel`);
       fetchReservations();
     } catch (err) {
-       alert((err as Error).message)
+      alert((err as Error).message);
       // setError((err as Error).message);
     }
   };
@@ -195,51 +193,7 @@ const Reservations: React.FC = () => {
         </div>
 
         {/* Stats Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-3 bg-blue-50 rounded-xl">
-                <ClockIcon className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
-                  Active Reservations
-                </p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {reservations.filter((r) => r.status === "active").length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-3 bg-green-50 rounded-xl">
-                <CheckBadgeIcon className="w-6 h-6 text-green-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Completed</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {reservations.filter((r) => r.status === "completed").length}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="p-3 bg-red-50 rounded-xl">
-                <XMarkIcon className="w-6 h-6 text-red-600" />
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Cancelled</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {reservations.filter((r) => r.status === "cancelled").length}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ReservationStats reservations={reservations} />
 
         {/* Reservation Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -286,21 +240,23 @@ const Reservations: React.FC = () => {
         books={books}
         userSearch={userSearch}
         bookSearch={bookSearch}
-        selectedUserId={selectedUserId}
-        selectedBookId={selectedBookId}
         onUserSearch={handleUserSearch}
         onBookSearch={handleBookSearch}
         onSelectUser={(u) => {
-          setSelectedUserId(u._id);
           setUserSearch(`${u.name} (${u.email})`);
           setUsers([]);
         }}
         onSelectBook={(b) => {
-          setSelectedBookId(b._id);
           setBookSearch(`${b.title} — ${b.author}`);
           setBooks([]);
         }}
-        onClose={() => {setShowModal(false);setBookSearch("");setUserSearch("")}}
+        onClose={() => {
+          setShowModal(false);
+          setUserSearch("");
+          setBookSearch("");
+          setUsers([]);
+          setBooks([]);
+        }}
         onSubmit={handleSubmitReserve}
       />
     </div>

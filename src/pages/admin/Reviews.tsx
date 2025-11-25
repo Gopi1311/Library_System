@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import type { Review } from "../types";
-import { api } from "../congif/api"; // your axios instance
-import { LoadingOverlay } from "../components/common/LoadingOverlay";
-import { GlobalError } from "../components/common/GlobalError";
+import { api } from "../../congif/api"; // your axios instance
+import { LoadingOverlay } from "../../components/common/LoadingOverlay";
+import { GlobalError } from "../../components/common/GlobalError";
+import { ReviewListSchema, type Review } from "../../validation/reviewSchema";
 
 const Reviews: React.FC = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -15,9 +15,10 @@ const Reviews: React.FC = () => {
       setError(null);
 
       const response = await api.get("/reviews/all");
-      console.log("res : ", response.data);
-      
-      setReviews(response.data.data || []);
+      console.log("data : ", response);
+
+      const parsed = ReviewListSchema.parse(response.data.data);
+      setReviews(parsed);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -97,14 +98,14 @@ const Reviews: React.FC = () => {
                   </p>
                 </div>
               </div>
-
-              {/* Review text */}
-              <p className="text-gray-700 mb-4">{review.review}</p>
-
-              {/* Footer */}
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500 -mt-2 mb-2">
                 Email: {review.userId?.email}
               </div>
+
+              {/* Review text */}
+              <p className="text-gray-700">{review.review}</p>
+
+              {/* Footer */}
             </div>
           ))}
         </div>

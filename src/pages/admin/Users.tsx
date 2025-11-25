@@ -1,10 +1,10 @@
 // src/pages/Users.tsx
 import React, { useState, useEffect } from "react";
-import UserTable from "../components/users/UserTable";
-import UserForm from "../components/users/UserForm";
-import { api } from "../congif/api";
-import { LoadingOverlay } from "../components/common/LoadingOverlay";
-import { GlobalError } from "../components/common/GlobalError";
+import UserTable from "../../components/admin/addUsers/UserTable";
+import UserForm from "../../components/admin/addUsers/UserForm";
+import { api } from "../../congif/api";
+import { LoadingOverlay } from "../../components/common/LoadingOverlay";
+import { GlobalError } from "../../components/common/GlobalError";
 
 import { z } from "zod";
 import {
@@ -12,7 +12,7 @@ import {
   type User,
   type UserCreateDTO,
   type UserUpdateDTO,
-} from "../validation/userSchema";
+} from "../../validation/userSchema";
 
 const Users: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -28,7 +28,7 @@ const Users: React.FC = () => {
 
     try {
       const { data } = await api.get("/users/");
-      const parsed = z.array(UserSchema).parse(data); // runtime validation + typing
+      const parsed = z.array(UserSchema).parse(data);
       setUsers(parsed);
     } catch (err: unknown) {
       const error = err as Error;

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import type { FinePayment, Borrow } from "../types";
-import { api } from "../congif/api";
-import FinePaymentHistory from "../components/fines/FinePaymentHistory";
-import { LoadingOverlay } from "../components/common/LoadingOverlay";
-import { GlobalError } from "../components/common/GlobalError";
+import type { Borrow } from "../../validation/borrowBookSchema";
+import type { FinePayment } from "../../validation/fineSchema";
+import { api } from "../../congif/api";
+import FinePaymentHistory from "../../components/common/FinePaymentHistory";
+import { LoadingOverlay } from "../../components/common/LoadingOverlay";
+import { GlobalError } from "../../components/common/GlobalError";
 
 const Fines: React.FC = () => {
   const [fines, setFines] = useState<FinePayment[]>([]);
@@ -25,7 +26,6 @@ const Fines: React.FC = () => {
     }
   };
 
-  
   const fetchOutstandingFines = async () => {
     try {
       const { data } = await api.get("/borrows/outstanding");

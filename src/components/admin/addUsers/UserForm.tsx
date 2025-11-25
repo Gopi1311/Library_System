@@ -3,13 +3,14 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import type {
-  User,
-  UserCreateDTO,
-  UserUpdateDTO,
-  UserFormDTO,
-} from "../../validation/userSchema";
-import { UserFormSchema } from "../../validation/userSchema";
+import {
+  type User,
+  type UserCreateDTO,
+  type UserUpdateDTO,
+  type UserFormDTO,
+  UserUpdateSchema,
+  UserCreateSchema,
+} from "../../../validation/userSchema";
 
 interface UserFormProps {
   editingUser: User | null;
@@ -36,17 +37,16 @@ const UserForm: React.FC<UserFormProps> = ({
       address: "",
       role: "member",
     },
-    resolver: zodResolver(UserFormSchema),
+    resolver: zodResolver(editingUser ? UserUpdateSchema : UserCreateSchema),
   });
 
   useEffect(() => {
     if (editingUser) {
       reset({
         name: editingUser.name,
-        email: editingUser.email,
         phone: editingUser.phone || "",
         address: editingUser.address || "",
-        role: "member", // map backend "user" to "member" if needed
+        role: editingUser.role as "member" | "librarian" | "admin", // ✅ use real role
         password: "",
       });
     } else {
@@ -62,25 +62,22 @@ const UserForm: React.FC<UserFormProps> = ({
   }, [editingUser, reset]);
 
   const onSubmit = (data: UserFormDTO) => {
+    console.log("data: ", data);
+
     if (editingUser) {
-      // validate as Update DTO
+      // UPDATE DTO
       const updateDto: UserUpdateDTO = {
         name: data.name,
         phone: data.phone,
         address: data.address,
-        role: data.role, // "member" | "librarian"
+        role: data.role,
       };
+
       onSubmitForm(updateDto);
     } else {
-      // validate as Create DTO
-      const createDto: UserCreateDTO = {
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        role: data.role,
-        password: data.password!, // required by UserCreateSchema
-      };
+      // CREATE DTO → extra Zod validation for password required
+      const parsed = UserCreateSchema.parse(data);
+      const createDto: UserCreateDTO = parsed;
       onSubmitForm(createDto);
     }
   };
@@ -105,15 +102,18 @@ const UserForm: React.FC<UserFormProps> = ({
             )}
 
             {/* EMAIL */}
-            <input
-              {...register("email")}
-              type="email"
-              disabled={!!editingUser}
-              placeholder="Email"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-            {errors.email && (
-              <p className="text-red-600 text-sm">{errors.email.message}</p>
+            {!editingUser && (
+              <>
+                <input
+                  {...register("email")}
+                  type="email"
+                  placeholder="Email"
+                  className="w-full px-3 py-2 border rounded-lg"
+                />
+                {errors.email && (
+                  <p className="text-red-600 text-sm">{errors.email.message}</p>
+                )}
+              </>
             )}
 
             {/* PASSWORD — only when creating */}
@@ -122,7 +122,6 @@ const UserForm: React.FC<UserFormProps> = ({
                 <input
                   {...register("password")}
                   type="password"
-                  disabled={!!editingUser}
                   placeholder="Password"
                   className="w-full px-3 py-2 border rounded-lg"
                 />
@@ -161,6 +160,7 @@ const UserForm: React.FC<UserFormProps> = ({
             >
               <option value="member">Member</option>
               <option value="librarian">Librarian</option>
+              <option value="admin">Admin</option>
             </select>
             {errors.role && (
               <p className="text-red-600 text-sm">{errors.role.message}</p>

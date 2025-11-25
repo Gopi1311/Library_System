@@ -1,16 +1,22 @@
-// src/validation/userSchema.ts
 import { z } from "zod";
 
-//
-// 1) FULL USER SCHEMA (GET API RESPONSE)
-//
+// Strong password definition
+const strongPassword = z
+  .string()
+  .min(6, "Password must be at least 6 characters")
+  .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Must contain at least one number")
+  .regex(/[^A-Za-z0-9]/, "Must contain at least one special symbol");
+
+// 1. Full user schema (API response)
 export const UserSchema = z.object({
   _id: z.string(),
   name: z.string(),
   email: z.string().email(),
   phone: z.string().optional(),
   address: z.string(),
-  role: z.enum(["member", "librarian"]), // matches your User interface
+  role: z.enum(["member", "librarian", "admin"]),
   createdAt: z.string(),
   updatedAt: z.string(),
 
@@ -21,60 +27,34 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
-
-//
-// 2) FORM SCHEMA (USED BY REACT HOOK FORM)
-//   - used for BOTH create & edit UI
-//
+// 2. Form schema (used by react-hook-form)
 export const UserFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters" }),
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email").optional(),
 
-  email: z
-    .string()
-    .email({ message: "Please enter a valid email" }),
+  phone: z.string().min(8, "Phone must be at least 8 digits").optional(),
+  address: z.string().min(5, "Address must be at least 5 characters"),
 
-  phone: z
-    .string()
-    .min(8, { message: "Phone must be at least 8 digits" })
-    .optional(),
-
-  address: z
-    .string()
-    .min(5, { message: "Address must be at least 5 characters" }),
-
-  // UI uses "member" & "librarian"
-  role: z.enum(["member", "librarian"], {
-      message: "Role must be member or librarian",
+  role: z.enum(["member", "librarian", "admin"], {
+    message: "Invalid role",
   }),
 
-  // password only required when creating
-  password: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters" })
-    .optional(),
+  password: strongPassword.optional(),
 });
 
 export type UserFormDTO = z.infer<typeof UserFormSchema>;
 
-
-//
-// 3) CREATE / UPDATE DTOs (from Zod, no manual interfaces)
-//
+// 3. Create DTO → password required
 export const UserCreateSchema = UserFormSchema.extend({
-  password: z
-    .string()
-    .min(6, { message: "Password must be at least 6 characters" }),
+  password: strongPassword,
 });
 
 export type UserCreateDTO = z.infer<typeof UserCreateSchema>;
 
+// 4. Update DTO → no email, no password
 export const UserUpdateSchema = UserFormSchema.omit({
   email: true,
   password: true,
-}).extend({
-  role: z.enum(["member", "librarian"]),
 });
 
 export type UserUpdateDTO = z.infer<typeof UserUpdateSchema>;

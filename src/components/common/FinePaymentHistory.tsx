@@ -1,5 +1,5 @@
 import React from "react";
-import type { FinePayment } from "../../types";
+import type { FinePayment } from "../../validation/fineSchema";
 
 interface FinePaymentHistoryProps {
   fines: FinePayment[];

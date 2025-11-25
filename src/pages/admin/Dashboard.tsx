@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
-import StatCard from "../components/dashBoard/StatCard";
-import DashBoardActivity from "../components/dashBoard/DashBoardActivity";
+import StatCard from "../../components/admin/dashBoard/StatCard";
+import DashBoardActivity from "../../components/admin/dashBoard/DashBoardActivity";
 
-import type { Activity, DashboardStats, StatCardProps } from "../types";
-import { api } from "../congif/api";
-import { LoadingOverlay } from "../components/common/LoadingOverlay";
-import { GlobalError } from "../components/common/GlobalError";
+import {
+  DashboardStatsSchema,
+  type DashboardStats,
+  ActivityListSchema,
+  type Activity,
+  StatCardDataSchema,
+  type StatCardProps,
+} from "../../validation/dashboardSchema";
+
+import { api } from "../../congif/api";
+import { LoadingOverlay } from "../../components/common/LoadingOverlay";
+import { GlobalError } from "../../components/common/GlobalError";
 
 import {
   BookOpenIcon,
