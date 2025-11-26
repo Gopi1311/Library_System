@@ -1,4 +1,3 @@
-// src/components/users/UserForm.tsx
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +9,7 @@ import {
   type UserFormDTO,
   UserUpdateSchema,
   UserCreateSchema,
-} from "../../../validation/userSchema";
+} from "../../validation/userSchema";
 
 interface UserFormProps {
   editingUser: User | null;
@@ -46,7 +45,7 @@ const UserForm: React.FC<UserFormProps> = ({
         name: editingUser.name,
         phone: editingUser.phone || "",
         address: editingUser.address || "",
-        role: editingUser.role as "member" | "librarian" | "admin", // ✅ use real role
+        role: editingUser.role as "member" | "librarian" | "admin",
         password: "",
       });
     } else {

@@ -66,72 +66,79 @@ const MyBorrows: React.FC = () => {
       </div>
 
       {/* CARDS */}
-      {borrows.map((borrow) => {
-        return (
-          <div
-            key={borrow._id}
-            className="bg-white rounded-2xl border lg:w-100 shadow-lg  p-3 space-y-5 transition duration-200 hover:shadow-xl hover:-translate-y-1"
-          >
-            {/* HEADER */}
-            <div className="flex gap-4">
-              {/* Book Cover Placeholder */}
-              <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs shadow-inner">
-                COVER
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
+        {borrows.map((borrow) => {
+          return (
+            <div
+              key={borrow._id}
+              className="bg-white rounded-2xl border shadow-lg p-3 space-y-5 
+                   transition duration-200 hover:shadow-xl hover:-translate-y-1"
+            >
+              {/* HEADER */}
+              <div className="flex gap-4">
+                {/* Book Cover Placeholder */}
+                <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs shadow-inner">
+                  COVER
+                </div>
+
+                <div className="flex flex-col justify-center">
+                  <h3 className="font-bold text-xl">{borrow.bookId.title}</h3>
+                  <p className="text-sm text-gray-600">
+                    {borrow.bookId.author}
+                  </p>
+                </div>
               </div>
 
-              <div className="flex flex-col justify-center">
-                <h3 className="font-bold text-xl">{borrow.bookId.title}</h3>
-                <p className="text-sm text-gray-600">{borrow.bookId.author}</p>
-              </div>
-            </div>
-
-            {/* DATES */}
-            <div className="grid grid-cols-2 gap-4 text-sm bg-gray-50 p-2 rounded-xl">
-              <p>
-                <span className="font-medium text-gray-600">Issued:</span>{" "}
-                {formatDate(borrow.issueDate)}
-              </p>
-              <p>
-                <span className="font-medium text-gray-600">Due:</span>{" "}
-                {formatDate(borrow.dueDate)}
-              </p>
-
-              {borrow.returnDate && (
-                <p className="col-span-2">
-                  <span className="font-medium text-gray-600">Returned:</span>{" "}
-                  {formatDate(borrow.returnDate)}
+              {/* DATES */}
+              <div className="grid grid-cols-2 gap-4 text-sm bg-gray-50 p-2 rounded-xl">
+                <p>
+                  <span className="font-medium text-gray-600">Issued:</span>{" "}
+                  {formatDate(borrow.issueDate)}
                 </p>
-              )}
-            </div>
 
-            {/* STATUS BADGE */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                  borrow.status
-                )}`}
-              >
-                {borrow.status.toUpperCase()}
-              </span>
+                <p>
+                  <span className="font-medium text-gray-600">Due:</span>{" "}
+                  {formatDate(borrow.dueDate)}
+                </p>
 
-              {borrow.fine > 0 && (
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
-                  Fine: ₹{borrow.fine}
+                {borrow.returnDate && (
+                  <p className="col-span-2">
+                    <span className="font-medium text-gray-600">Returned:</span>{" "}
+                    {formatDate(borrow.returnDate)}
+                  </p>
+                )}
+              </div>
+
+              {/* STATUS BADGE */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                    borrow.status
+                  )}`}
+                >
+                  {borrow.status.toUpperCase()}
                 </span>
-              )}
-            </div>
 
-            {/* ACTION BUTTON */}
-            <div>
-              <button
-                className={`w-full py-2 rounded-lg font-semibold text-white transition bg-blue-600 hover:bg-blue-700 cursor-pointer`}
-              >
-                Renew Book
-              </button>
+                {borrow.fine > 0 && (
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                    Fine: ₹{borrow.fine}
+                  </span>
+                )}
+              </div>
+
+              {/* ACTION BUTTON */}
+              <div>
+                <button
+                  className={`w-full py-2 rounded-lg font-semibold text-white transition 
+                        bg-blue-600 hover:bg-blue-700 cursor-pointer`}
+                >
+                  Renew Book
+                </button>
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
 
       {/* EMPTY STATE */}
       {borrows.length === 0 && (

@@ -1,49 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import type { Activity } from "../../types";
+import type { Activity, QuickAction } from "../../../validation/dashboardSchema";
 
 interface DashBoardActivityProps {
   recentActivity: Activity[];
+  quickActions?: QuickAction[]; // admin only
 }
-const quickActions = [
-  {
-    to: "/books?action=add",
-    icon: "📚",
-    label: "Add New Book",
-    color: "blue",
-  },
-  {
-    to: "/users?action=add",
-    icon: "👥",
-    label: "Add New User",
-    color: "green",
-  },
-  {
-    to: "/borrow",
-    icon: "📖",
-    label: "Issue Book",
-    color: "purple",
-  },
-  {
-    to: "/fines",
-    icon: "💰",
-    label: "Process Fine",
-    color: "yellow",
-  },
-];
 
 const DashBoardActivity: React.FC<DashBoardActivityProps> = ({
   recentActivity,
+  quickActions = [],
 }) => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Recent Activity */}
+      {/* RECENT ACTIVITY */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Recent Activity</h2>
-          <span className="text-sm text-blue-600 font-medium cursor-pointer">
+          {/* <span className="text-sm text-blue-600 font-medium cursor-pointer">
             View All
-          </span>
+          </span> */}
         </div>
 
         <div className="space-y-4">
@@ -74,9 +50,8 @@ const DashBoardActivity: React.FC<DashBoardActivityProps> = ({
 
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {activity.user}{" "}
-                  {activity.type === "fine_payment"
-                    ? `paid $${activity.amount} fine`
+                  {activity.user
+                    ? `${activity.user} ${activity.type}ed "${activity.book}"`
                     : `${activity.type}ed "${activity.book}"`}
                 </p>
                 <p className="text-xs text-gray-500">{activity.time}</p>
@@ -86,38 +61,40 @@ const DashBoardActivity: React.FC<DashBoardActivityProps> = ({
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+      {/* QUICK ACTIONS — ONLY FOR ADMIN */}
+      {quickActions.length > 0 && (
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
 
-        <div className="grid grid-cols-2 gap-4">
-          {quickActions.map((action, index) => (
-            <Link
-              key={index}
-              to={action.to}
-              className={`lg:p-14 p-4 border-2 border-dashed border-gray-300 rounded-lg 
-      ${
-        action.color === "blue"
-          ? "hover:border-blue-500 hover:bg-blue-50"
-          : action.color === "green"
-          ? "hover:border-green-500 hover:bg-green-50"
-          : action.color === "purple"
-          ? "hover:border-purple-500 hover:bg-purple-50"
-          : "hover:border-yellow-500 hover:bg-yellow-50"
-      }
-      transition-colors text-center group`}
-            >
-              <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform">
-                {action.icon}
-              </span>
+          <div className="grid grid-cols-2 gap-4">
+            {quickActions.map((action, index) => (
+              <Link
+                key={index}
+                to={action.to}
+                className={`lg:p-14 p-4 border-2 border-dashed border-gray-300 rounded-lg 
+                ${
+                  action.color === "blue"
+                    ? "hover:border-blue-500 hover:bg-blue-50"
+                    : action.color === "green"
+                    ? "hover:border-green-500 hover:bg-green-50"
+                    : action.color === "purple"
+                    ? "hover:border-purple-500 hover:bg-purple-50"
+                    : "hover:border-yellow-500 hover:bg-yellow-50"
+                }
+                transition-colors text-center group`}
+              >
+                <span className="text-2xl mb-2 block group-hover:scale-110 transition-transform">
+                  {action.icon}
+                </span>
 
-              <span className="text-sm font-medium text-gray-700">
-                {action.label}
-              </span>
-            </Link>
-          ))}
+                <span className="text-sm font-medium text-gray-700">
+                  {action.label}
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

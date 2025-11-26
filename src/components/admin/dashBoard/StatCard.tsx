@@ -1,5 +1,5 @@
 import React from "react";
-import type { StatCardProps } from "../../types";
+import type { StatCardProps } from "../../../validation/dashboardSchema";
 
 const COLOR_MAP = {
   blue: "bg-blue-100 text-blue-600",

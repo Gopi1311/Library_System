@@ -6,14 +6,18 @@ interface HeaderProps {
 }
 
 const pageTitles: Record<string, string> = {
-  "/": "Dashboard",
-  "/books": "Book Collection",
-  "/users": "User Management",
-  "/borrow": "Borrow Management",
-  "/reservations": "Reservations",
-  "/reviews": "Reviews",
-  "/fines": "Fines & Payments",
-  
+  "/admin": "Admin Dashboard Management",
+  "/admin/books": "Book Collection",
+  "/admin/users": "User Management",
+  "/admin/borrow": "Borrow Management",
+  "/admin/reservations": "Reservations",
+  "/admin/reviews": "Reviews",
+  "/admin/fines": "Fines & Payments",
+  "/user/browsebook": "Browse Your Book",
+  "/user/myborrows": "Borrow Details",
+  "/user/reservations": "Reservations",
+  "/user/fines": "Fines & Payments",
+  "/user/profile": "My Profile",
 };
 
 const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
@@ -23,31 +27,43 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
   return (
     <header className="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-40">
       <div className="flex items-center justify-between p-4">
-
         {/* Mobile Menu Button */}
         <button
           onClick={onMenuToggle}
           className="lg:hidden p-2 rounded-md text-gray-600 hover:bg-gray-100 transition"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
               d="M4 6h16M4 12h16M4 18h16"
             />
           </svg>
         </button>
 
         {/* Page Title */}
-        <h1 className="text-2xl font-bold text-gray-900">
-          {title}
-        </h1>
+        <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
-
           {/* Notification Bell */}
           <button className="relative p-2 rounded-full hover:bg-gray-100 transition">
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            <svg
+              className="w-6 h-6 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
                 d="M15 17h5l-1.405-1.405A2.032 2.032 
                 0 0118 14.158V11a6.002 6.002 
                 0 00-4-5.659V4a2 2 0 
@@ -66,7 +82,6 @@ const Header: React.FC<HeaderProps> = ({ onMenuToggle }) => {
             A
           </div>
         </div>
-
       </div>
     </header>
   );

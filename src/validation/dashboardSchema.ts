@@ -1,8 +1,7 @@
-// src/validation/dashboardSchema.ts
 import { z } from "zod";
 import type React from "react";
 
-/* -------------------- 1) DashboardStats -------------------- */
+/* -------------------- 1) ADMIN DASHBOARD STATS -------------------- */
 
 export const DashboardStatsSchema = z.object({
   totalBooks: z.number(),
@@ -14,9 +13,19 @@ export const DashboardStatsSchema = z.object({
 
 export type DashboardStats = z.infer<typeof DashboardStatsSchema>;
 
-/* -------------------- 2) StatCard (data + props) -------------------- */
+/* -------------------- 2) MEMBER DASHBOARD STATS -------------------- */
 
-// Schema for the *data* part (what you might get from API, etc.)
+export const MemberStatsSchema = z.object({
+  activeBorrows: z.number(),
+  reservations: z.number(),
+  fines: z.number(),
+  totalBorrowed: z.number(),
+});
+
+export type MemberStats = z.infer<typeof MemberStatsSchema>;
+
+/* -------------------- 3) STAT CARD -------------------- */
+
 export const StatCardDataSchema = z.object({
   label: z.string(),
   value: z.union([z.number(), z.string()]),
@@ -25,22 +34,31 @@ export const StatCardDataSchema = z.object({
 
 export type StatCardData = z.infer<typeof StatCardDataSchema>;
 
-// React component props = data from schema + icon (not validated by Zod)
 export interface StatCardProps extends StatCardData {
   icon: React.ReactNode;
 }
 
-/* -------------------- 3) Activity -------------------- */
+/* -------------------- 4) ACTIVITY -------------------- */
 
 export const ActivitySchema = z.object({
   type: z.enum(["borrow", "return", "reservation", "fine_payment"]),
-  user: z.string(),
+  user: z.string().optional(),
   book: z.string().optional(),
   amount: z.number().optional(),
-  time: z.string(), // e.g. ISO string or "2 hours ago"
+  time: z.string(),
 });
 
 export type Activity = z.infer<typeof ActivitySchema>;
 
-// Optional: list schemas if you validate arrays
 export const ActivityListSchema = z.array(ActivitySchema);
+
+/* -------------------- 5) QUICK ACTION -------------------- */
+
+export const QuickActionSchema = z.object({
+  to: z.string(),
+  icon: z.string(),
+  label: z.string(),
+  color: z.enum(["blue", "green", "yellow", "purple"]),
+});
+
+export type QuickAction = z.infer<typeof QuickActionSchema>;

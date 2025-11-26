@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from "react";
 import StatCard from "../../components/admin/dashBoard/StatCard";
 import DashBoardActivity from "../../components/admin/dashBoard/DashBoardActivity";
-
-import {
-  DashboardStatsSchema,
-  type DashboardStats,
-  ActivityListSchema,
-  type Activity,
-  StatCardDataSchema,
-  type StatCardProps,
+import type {
+  DashboardStats,
+  Activity,
+  StatCardProps,
+  QuickAction,
 } from "../../validation/dashboardSchema";
-
 import { api } from "../../congif/api";
 import { LoadingOverlay } from "../../components/common/LoadingOverlay";
 import { GlobalError } from "../../components/common/GlobalError";
@@ -109,6 +105,13 @@ const Dashboard: React.FC = () => {
       color: "red",
     },
   ];
+ const quickActions: QuickAction[] = [
+  { to: "/admin/books?action=add", icon: "📚", label: "Add New Book", color: "blue" },
+  { to: "/admin/users?action=add", icon: "👥", label: "Add New User", color: "green" },
+  { to: "/admin/borrow", icon: "📖", label: "Issue Book", color: "purple" },
+  { to: "/admin/fines", icon: "💰", label: "Process Fine", color: "yellow" },
+];
+
 
   return (
     <div className="space-y-6 pb-6 relative">
@@ -116,15 +119,16 @@ const Dashboard: React.FC = () => {
 
       <p className="text-gray-600">Welcome to your library management system</p>
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         {dashboardCards.map((card) => (
           <StatCard key={card.label} {...card} />
         ))}
       </div>
 
-      {/* Recent Activity */}
-      <DashBoardActivity recentActivity={recentActivity} />
+      <DashBoardActivity
+        recentActivity={recentActivity}
+        quickActions={quickActions} 
+      />
     </div>
   );
 };

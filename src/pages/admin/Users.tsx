@@ -1,7 +1,7 @@
 // src/pages/Users.tsx
 import React, { useState, useEffect } from "react";
 import UserTable from "../../components/admin/addUsers/UserTable";
-import UserForm from "../../components/admin/addUsers/UserForm";
+import UserForm from "../../components/common/UserForm";
 import { api } from "../../congif/api";
 import { LoadingOverlay } from "../../components/common/LoadingOverlay";
 import { GlobalError } from "../../components/common/GlobalError";
@@ -55,7 +55,7 @@ const Users: React.FC = () => {
         const { name, phone, address, role } = data as UserUpdateDTO;
         body = { name, phone, address, role };
       } else {
-        url = `/users`;
+        url = `/users/register`;
         method = "post";
 
         const { name, email, phone, address, role, password } =

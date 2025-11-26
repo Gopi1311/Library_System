@@ -1,5 +1,5 @@
 import React from "react";
-import type { User } from "../../types";
+import type { User } from "../../../validation/userSchema";
 
 interface UserTableProps {
   users: User[];
@@ -45,7 +45,6 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit }) => {
           <tbody className="bg-white divide-y divide-gray-200">
             {users.map((user) => (
               <tr key={user._id} className="hover:bg-gray-50">
-                {/* NAME */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
@@ -58,17 +57,12 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit }) => {
                     </div>
                   </div>
                 </td>
-
-                {/* EMAIL + PHONE */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm text-gray-900">{user.email}</div>
                   <div className="text-sm text-gray-500">
                     {user.phone || "No phone"}
                   </div>
                 </td>
-
-                {/* LAST BORROW */}
-                {/* LAST BORROW */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-semibold
@@ -89,18 +83,12 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit }) => {
                       : "Nill"}
                   </span>
                 </td>
-
-                {/* RESERVATIONS */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {user.reservations ?? 0}
                 </td>
-
-                {/* FINES */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-semibold">
                   ₹ {user.pendingFines?.toFixed(2) ?? "0.00"}
                 </td>
-
-                {/* ROLE */}
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
                     className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
@@ -112,8 +100,6 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit }) => {
                     {user.role}
                   </span>
                 </td>
-
-                {/* ACTIONS */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <button
                     onClick={() => onEdit(user)}

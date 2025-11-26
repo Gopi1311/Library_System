@@ -11,11 +11,10 @@ import { api } from "../../congif/api";
 
 import BorrowTableRow from "../../components/admin/borrows/BorrowTableRow";
 import IssueBookModal from "../../components/admin/borrows/IssueBookModal";
-import FinePaymentModal from "../../components/admin/borrows/FinePaymentModal";
+import FinePaymentModal from "../../components/common/FinePaymentModal";
 
 import { LoadingOverlay } from "../../components/common/LoadingOverlay";
 import { GlobalError } from "../../components/common/GlobalError";
-
 const Borrows: React.FC = () => {
   const [borrows, setBorrows] = useState<Borrow[]>([]);
   const [users, setUsers] = useState<BorrowUser[]>([]);
@@ -117,7 +116,6 @@ const Borrows: React.FC = () => {
 
     try {
       await api.post("/fines/pay-fine", {
-        userId: selectedBorrow.userId._id,
         borrowId: selectedBorrow._id,
         amount: selectedBorrow.fine,
         method: paymentMethod,
@@ -222,6 +220,7 @@ const Borrows: React.FC = () => {
       <FinePaymentModal
         isOpen={showFineModal}
         borrow={selectedBorrow}
+        role={"admin"}
         method={paymentMethod}
         onClose={() => setShowFineModal(false)}
         onPay={handleFinePayment}

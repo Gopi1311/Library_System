@@ -1,10 +1,10 @@
 import React from "react";
-import type { Borrow } from "../../../validation/borrowBookSchema";
-
+import type { Borrow } from "../../validation/borrowBookSchema";
 interface FinePaymentProps {
   isOpen: boolean;
   borrow: Borrow | null;
   method: "cash" | "card" | "online";
+  role: "admin" | "member";
 
   onClose: () => void;
   onPay: () => void;
@@ -15,6 +15,7 @@ const FinePaymentModal: React.FC<FinePaymentProps> = ({
   isOpen,
   borrow,
   method,
+  role,
   onClose,
   onPay,
   onMethodChange,
@@ -33,14 +34,13 @@ const FinePaymentModal: React.FC<FinePaymentProps> = ({
           <span className="text-red-600"> ₹{borrow.fine.toFixed(2)}</span>
         </p>
 
+        {/* PAYMENT METHOD DROPDOWN */}
         <select
           value={method}
-          onChange={(e) =>
-            onMethodChange(e.target.value as "cash" | "card" | "online")
-          }
+          onChange={(e) => onMethodChange(e.target.value as any)}
           className="border px-3 py-2 rounded w-full mb-4"
         >
-          <option value="cash">Cash</option>
+          {role === "admin" && <option value="cash">Cash</option>}
           <option value="card">Card</option>
           <option value="online">Online</option>
         </select>
