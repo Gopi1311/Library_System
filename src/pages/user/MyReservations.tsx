@@ -42,7 +42,7 @@ const MyReservations: React.FC = () => {
           : `?status=${encodeURIComponent(statusFilter)}`;
 
       const { data } = await api.get(
-        `/reservations/user/${currentUser._id}/${query}`
+        `/reservations/user/me/${query}`
       );
       console.log("data: ", data);
 

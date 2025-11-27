@@ -31,15 +31,14 @@ const MemberDashboard: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
   const [fatalError, setFatalError] = useState<string | null>(null);
-  const userId = "6923fdc88ec3f845a24f4a35";
   const loadDashboard = async () => {
     try {
       setLoading(true);
       setFatalError(null);
 
       const results = await Promise.allSettled([
-        api.get(`/member/stats/${userId}`),
-        api.get(`/member/recent-activities/${userId}`),
+        api.get(`/member/stats/me`),
+        api.get(`/member/recent-activities/me`),
       ]);
 
       if (results[0].status === "fulfilled") {

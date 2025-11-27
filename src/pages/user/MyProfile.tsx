@@ -36,7 +36,7 @@ const MyProfile: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const { data } = await api.get(`/users/${userId}`);
+      const { data } = await api.get(`/users/me`);
       setUser(data);
     } catch (err) {
       setError((err as Error).message);

@@ -13,9 +13,6 @@ const MyBorrows: React.FC = () => {
   const [borrows, setBorrows] = useState<Borrow[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const userId = "6923fdc88ec3f845a24f4a35";
-
   useEffect(() => {
     loadPageData();
   }, []);
@@ -25,7 +22,7 @@ const MyBorrows: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const res = await api.get(`/borrows/user/${userId}`);
+      const res = await api.get(`/borrows/user/me`);
       const parsed = BorrowListSchema.parse(res.data);
 
       setBorrows(parsed);

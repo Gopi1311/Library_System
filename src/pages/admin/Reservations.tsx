@@ -70,7 +70,7 @@ const Reservations: React.FC = () => {
       const { data } = await api.get(`/books/search?title=${q}`);
       setBooks(data);
     } catch (err) {
-      alert((err as Error).message);
+      alert((err as Error).message); 
     }
   };
 

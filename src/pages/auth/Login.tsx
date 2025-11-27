@@ -6,7 +6,11 @@ import TextInput from "../../components/common/TextInput";
 import { api } from "../../congif/api";
 import { useNavigate } from "react-router-dom";
 
-const Login: React.FC = () => {
+interface LoginProps {
+  setUser: (user: any) => void;
+}
+
+const Login: React.FC<LoginProps> = ({ setUser }) => {
   const {
     register,
     handleSubmit,
@@ -14,17 +18,13 @@ const Login: React.FC = () => {
   } = useForm<LoginDTO>({
     resolver: zodResolver(LoginSchema),
   });
-  const navigate=useNavigate();
-
+  const navigate = useNavigate();
   const onSubmit = async (data: LoginDTO) => {
-    const res = await api.post("/auth/login", data, { withCredentials: true });
-
-    console.log(res.data);
-    alert("Login successful!");
+    const res = await api.post("/auth/login", data);
     const user = res.data.user;
-
     localStorage.setItem("user", JSON.stringify(user));
-
+    setUser(user);
+    alert("Login successful!");
     if (user.role === "admin") {
       navigate("/admin");
     } else {

@@ -22,7 +22,7 @@ const MyFines: React.FC = () => {
   const fetchFines = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get(`/fines/user/${userId}`);
+      const { data } = await api.get(`/fines/user/me`);
       setFines(data.data || []);
     } catch (err) {
       setError((err as Error).message);
@@ -33,7 +33,7 @@ const MyFines: React.FC = () => {
 
   const fetchOutstandingFines = async () => {
     try {
-      const { data } = await api.get(`/borrows/user/outstanding/${userId}`);
+      const { data } = await api.get(`/borrows/user/outstanding/me`);
       const outstanding = (data.data || []).filter(
         (b: Borrow) => b.fine > 0 && b.status !== "returned"
       );
