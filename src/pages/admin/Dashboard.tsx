@@ -10,6 +10,7 @@ import type {
 import { api } from "../../congif/api";
 import { LoadingOverlay } from "../../components/common/LoadingOverlay";
 import { GlobalError } from "../../components/common/GlobalError";
+import Chart from "./Chart";
 
 import {
   BookOpenIcon,
@@ -105,13 +106,22 @@ const Dashboard: React.FC = () => {
       color: "red",
     },
   ];
- const quickActions: QuickAction[] = [
-  { to: "/admin/books?action=add", icon: "📚", label: "Add New Book", color: "blue" },
-  { to: "/admin/users?action=add", icon: "👥", label: "Add New User", color: "green" },
-  { to: "/admin/borrow", icon: "📖", label: "Issue Book", color: "purple" },
-  { to: "/admin/fines", icon: "💰", label: "Process Fine", color: "yellow" },
-];
-
+  const quickActions: QuickAction[] = [
+    {
+      to: "/admin/books?action=add",
+      icon: "📚",
+      label: "Add New Book",
+      color: "blue",
+    },
+    {
+      to: "/admin/users?action=add",
+      icon: "👥",
+      label: "Add New User",
+      color: "green",
+    },
+    { to: "/admin/borrow", icon: "📖", label: "Issue Book", color: "purple" },
+    { to: "/admin/fines", icon: "💰", label: "Process Fine", color: "yellow" },
+  ];
 
   return (
     <div className="space-y-6 pb-6 relative">
@@ -124,11 +134,19 @@ const Dashboard: React.FC = () => {
           <StatCard key={card.label} {...card} />
         ))}
       </div>
+<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  {/* LEFT SIDE — Activity (takes 2/3 width) */}
+  <div className="lg:col-span-2">
+    <DashBoardActivity recentActivity={recentActivity}  quickActions={quickActions}/>
+  </div>
 
-      <DashBoardActivity
-        recentActivity={recentActivity}
-        quickActions={quickActions} 
-      />
+  {/* RIGHT SIDE — Chart (takes 1/3 width) */}
+  <div className="lg:col-span-1">
+    <Chart />
+  </div>
+</div>
+
+
     </div>
   );
 };

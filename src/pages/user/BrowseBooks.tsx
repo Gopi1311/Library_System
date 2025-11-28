@@ -12,13 +12,20 @@ const BrowseBooks: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [userId,setUserId]=useState("6923fdc88ec3f845a24f4a35")
+  const [userId, setUserId] = useState("");
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      setUserId(parsed._id || parsed.id || "");
+    }
+    fetchBooks();
+  }, []);
   const fetchBooks = async () => {
     try {
       setLoading(true);
       const { data } = await api.get("/books/all");
-
       const validated = z.array(BookSchema).parse(data);
       setBooks(validated);
     } catch (err) {
@@ -27,10 +34,6 @@ const BrowseBooks: React.FC = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchBooks();
-  }, []);
 
   const filteredBooks = books.filter((b) =>
     [b.title, b.author, b.genre, b.isbn ?? ""]
@@ -42,7 +45,7 @@ const BrowseBooks: React.FC = () => {
   const handleReserve = async (bookId: string) => {
     try {
       await api.post("/reservations", {
-        userId: userId, // TODO: Put logged-in user ID
+        userId: userId,
         bookId,
       });
       alert("Book reserved successfully!");
@@ -99,7 +102,9 @@ const BrowseBooks: React.FC = () => {
                   {book.title}
                 </h3>
                 <p className="text-sm text-gray-700">by {book.author}</p>
-                <p className="text-xs text-gray-500">Genre: {book.genre || "—"}</p>
+                <p className="text-xs text-gray-500">
+                  Genre: {book.genre || "—"}
+                </p>
 
                 <div className="flex justify-between items-center pt-2">
                   <span

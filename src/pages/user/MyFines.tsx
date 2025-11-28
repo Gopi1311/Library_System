@@ -17,8 +17,6 @@ const MyFines: React.FC = () => {
   const [selectedBorrow, setSelectedBorrow] = useState<Borrow | null>(null);
   const [method, setMethod] = useState<"card" | "online">("card");
 
-  const userId = "6923fdc88ec3f845a24f4a35"; // From JWT later
-
   const fetchFines = async () => {
     setLoading(true);
     try {

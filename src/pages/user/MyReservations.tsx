@@ -26,11 +26,12 @@ const MyReservations: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
   const [bookSearch, setBookSearch] = useState("");
-  const currentUser = {
-    _id: "6923fdc88ec3f845a24f4a35",
-    name: "Gopinath K",
-    email: "gopinathk1311@gmail.com",
-  };
+  const [currentUser, setCurrentUser] = useState({
+    _id: "",
+    name: "",
+    email: "",
+    role: "",
+  });
   const fetchReservations = useCallback(async () => {
     try {
       setLoading(true);
@@ -41,9 +42,7 @@ const MyReservations: React.FC = () => {
           ? ""
           : `?status=${encodeURIComponent(statusFilter)}`;
 
-      const { data } = await api.get(
-        `/reservations/user/me/${query}`
-      );
+      const { data } = await api.get(`/reservations/user/me/${query}`);
       console.log("data: ", data);
 
       setReservations(data.data || []);
@@ -54,6 +53,17 @@ const MyReservations: React.FC = () => {
     }
   }, [statusFilter]);
   useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+
+      setCurrentUser({
+        _id: parsed._id || parsed.id || "",
+        name: parsed.name || "",
+        email: parsed.email || "",
+        role: parsed.role || "",
+      });
+    }
     fetchReservations();
   }, [fetchReservations]);
 
@@ -121,9 +131,6 @@ const MyReservations: React.FC = () => {
     );
   };
 
-  /* ----------------------------------------
-   * Error Page
-   * ---------------------------------------- */
   if (error) return <GlobalError message={error} onRetry={fetchReservations} />;
 
   return (

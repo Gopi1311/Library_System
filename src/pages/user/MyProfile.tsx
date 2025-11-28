@@ -29,13 +29,20 @@ const MyProfile: React.FC = () => {
 
   const [showForm, setShowForm] = useState(false);
 
-  const userId = "6923fdc88ec3f845a24f4a35"; 
+  const [userId, setUserId] = useState("");
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      setUserId(parsed._id || parsed.id || "");
+    }
+    fetchUser();
+  }, []);
   const fetchUser = async () => {
     try {
       setLoading(true);
       setError(null);
-
       const { data } = await api.get(`/users/me`);
       setUser(data);
     } catch (err) {
@@ -44,10 +51,6 @@ const MyProfile: React.FC = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   const handleFormSubmit = async (data: UserUpdateDTO) => {
     try {
@@ -61,7 +64,7 @@ const MyProfile: React.FC = () => {
       await api.put(`/users/${userId}`, body);
 
       setShowForm(false);
-      fetchUser(); 
+      fetchUser();
     } catch (err) {
       console.error("Update User Error:", err);
       alert((err as Error).message);

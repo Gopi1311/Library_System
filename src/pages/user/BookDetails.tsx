@@ -18,8 +18,16 @@ const BookDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [reserving, setReserving] = useState(false);
-  const [userId,setUserId] = useState("6923fdc88ec3f845a24f4a35");
+  const [userId, setUserId] = useState("");
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      setUserId(parsed._id || parsed.id || "");
+    }
+    fetchBook();
+  }, [id]);
   const fetchBook = async () => {
     try {
       setLoading(true);
@@ -53,10 +61,6 @@ const BookDetails: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchBook();
-  }, [id]);
-
   if (loading)
     return (
       <div className="h-screen flex items-center justify-center text-gray-600 text-lg">
@@ -79,7 +83,6 @@ const BookDetails: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto mt-6 p-6 bg-white rounded-2xl shadow-lg space-y-8">
-
       {/* Back button */}
       <button
         onClick={() => navigate(-1)}
@@ -115,7 +118,6 @@ const BookDetails: React.FC = () => {
 
       {/* Info Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
         <div className="p-5 bg-gray-50 rounded-xl border border-gray-200 shadow-sm">
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-4 text-gray-800">
             <IdentificationIcon className="w-5 h-5 text-blue-600" />
@@ -123,10 +125,18 @@ const BookDetails: React.FC = () => {
           </h3>
 
           <div className="space-y-3 text-sm">
-            <p><strong>ISBN:</strong> {book.isbn}</p>
-            <p><strong>Genre:</strong> {book.genre || "—"}</p>
-            <p><strong>Publisher:</strong> {book.publisher}</p>
-            <p><strong>Publication Year:</strong> {book.publicationYear}</p>
+            <p>
+              <strong>ISBN:</strong> {book.isbn}
+            </p>
+            <p>
+              <strong>Genre:</strong> {book.genre || "—"}
+            </p>
+            <p>
+              <strong>Publisher:</strong> {book.publisher}
+            </p>
+            <p>
+              <strong>Publication Year:</strong> {book.publicationYear}
+            </p>
           </div>
         </div>
 
@@ -137,7 +147,9 @@ const BookDetails: React.FC = () => {
           </h3>
 
           <div className="space-y-3 text-sm">
-            <p><strong>Total Copies:</strong> {book.totalCopies}</p>
+            <p>
+              <strong>Total Copies:</strong> {book.totalCopies}
+            </p>
             <p>
               <strong>Available:</strong>{" "}
               <span
@@ -148,10 +160,11 @@ const BookDetails: React.FC = () => {
                 {book.availableCopies}
               </span>
             </p>
-            <p><strong>Shelf:</strong> {book.shelfLocation}</p>
+            <p>
+              <strong>Shelf:</strong> {book.shelfLocation}
+            </p>
           </div>
         </div>
-
       </div>
 
       {/* Summary */}
